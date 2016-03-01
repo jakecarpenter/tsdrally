@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Basic TSD Calculator</title>
+  </head>
+  <link rel="stylesheet" href="/bower_components/foundation/css/foundation.css">
+  <style media="screen">
+    .driver-display{
+
+    }
+    .distance {
+      border-bottom: 2px solid black;
+      height: 33vh;
+      display: flex;
+      line-height: 30vh;
+    }
+    .mileage {
+      height: 100%;
+      width: 70vw;
+      padding: auto auto;
+      font-size: 22vh;
+      text-align: center;
+      line-height: 20vh;
+    }
+    .cast {
+      height: 100%;
+      width: 30vw;
+      padding: auto auto;
+      font-size: 21vh;
+      text-align: center;
+      border-right: 2px solid black;
+      line-height: 20vh;
+    }
+    .times {
+      height: 33vh;
+      border-bottom: 2px solid black;
+      display: flex;
+    }
+    .difference {
+      height: 100%;
+      width: 30vw;
+      padding: auto auto;
+      font-size: 20vh;
+      line-height: 25vh;
+      text-align: center;
+      border-right: 2px solid black;
+      line-height: 20vh;
+    }
+    .time {
+      height: 100%;
+      width: 70vw;
+      padding: auto auto;
+      font-size: 22vh;
+      text-align: center;
+      line-height: 20vh;
+    }
+    .driver-display .instruction {
+      border-bottom: none;
+      height: 34vh;
+    }
+
+    .instruction {
+      display: flex;
+    }
+
+    .next-instruction {
+      height: 100%;
+      width: 70vw;
+      padding: auto auto;
+      font-size: 2.5rem;
+      text-align: center;
+    }
+
+
+    h4 {
+      color: #888;
+      position: relative;
+      top: 5px;
+      left: 5px;
+      text-align: left;
+    }
+
+  </style>
+  <body ng-app="app">
+    <div ng-controller="DriverController" class="driver-display">
+      <div class="distance">
+        <div class="cast">
+          <h4>SPEED:</h4>{{ currentAverageSpeed }}
+        </div>
+        <div class="mileage">
+          <h4>MILEAGE:</h4>{{currentMileage / 1000}}
+        </div>
+      </div>
+      <div class="times">
+        <div class="cast">
+          <h4>CAST:</h4>{{ currentCAST}}
+        </div>
+        <div class="time">
+          <h4>TIMEs:</h4>{{ currentTime }}
+        </div>
+      </div>
+      <div class="instruction">
+          <div class="difference">
+            <h4>DIFF:</h4>{{ currentDifference }}
+          </div>
+        <div class="next-instruction">
+          <h4>NEXT INSTRUCTION:</h4>
+          {{ nextInstruction.instruction }}
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="/bower_components/angular/angular.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+
+
+</html>

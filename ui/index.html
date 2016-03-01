@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Basic TSD Calculator</title>
+  </head>
+  <link rel="stylesheet" href="/bower_components/foundation/css/foundation.css">
+  <style media="screen">
+    .complete {
+      opacity: .2;
+    }
+    .current {
+      font-weight: bolder;
+      color: blue
+    }
+    .upcoming {
+      opacity: .6;
+    }
+  </style>
+  <body ng-app="app">
+    <div ng-controller="RouteController">
+      <h4># of Instructions: {{ totalInstructions }}, CURRENT INSTRUCTION: {{currentInstruction}}</h4>
+      <h4>CAST: {{ currentCAST }}</h4>
+      <h4>TIME: {{ currentTime | date:'HH:MM:ss'}}</h4>
+      <h4>ODO: {{ currentMileage / 1000 }}</h4>
+      <h4>CAS: {{ currentAverageSpeed }}</h4>
+      <h4>VARIATION: {{ currentVariation }}</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>Mileage</th>
+            <th>Average Speed</th>
+            <th>Instruction</th>
+            <th>Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            ng-repeat="instruction in stage"
+            ng-class="
+              {
+                'complete': instruction.status == 'past' ,
+                'current': instruction.status == 'current',
+                'upcoming': instruction.status == 'upcoming'
+              }">
+            <td>{{$index + 1}}</td>
+            <td>{{instruction.mileage / 1000}}</td>
+            <td>{{instruction.speed}}</td>
+            <td>{{instruction.instruction}}</td>
+            <td>{{instruction.time | date:"hh:mm:ss"}}</td>
+            <!-- <td>{{instruction.time}}</td> -->
+            <td>{{instruction.duration}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script type="text/javascript" src="/bower_components/angular/angular.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+
+
+</html>

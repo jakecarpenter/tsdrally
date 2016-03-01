@@ -1,0 +1,16 @@
+{
+  "name": "tsd",
+  "version": "1.0.0",
+  "description": "A basic TSD Calculator",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "Jake Carpenter",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.10.2",
+    "socket.io": "^1.4.5"
+  }
+}
