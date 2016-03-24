@@ -16,15 +16,130 @@
     .upcoming {
       opacity: .6;
     }
+
+    table {
+      width: 95vw;
+      margin: 0 auto;
+    }
+
+    .driver-display {
+      width: 95vw;
+      border: 2px solid black;
+      margin: 1vh auto;
+    }
+    .distance {
+      border-bottom: 2px solid black;
+      height: 10vh;
+      display: flex;
+    }
+    .mileage {
+      height: 100%;
+      width: 70vw;
+      padding: auto auto;
+      font-size: 6vh;
+      text-align: center;
+      line-height: 8vh;
+    }
+    .cast {
+      height: 100%;
+      width: 30vw;
+      padding: auto auto;
+      font-size: 6vh;
+      text-align: center;
+      border-right: 2px solid black;
+      line-height: 8vh;
+    }
+    .times {
+      height: 10vh;
+      border-bottom: 2px solid black;
+      display: flex;
+    }
+    .difference {
+      height: 100%;
+      width: 30vw;
+      padding: auto auto;
+      font-size: 7vh;
+      text-align: center;
+      border-right: 2px solid black;
+      line-height: 8vh;
+    }
+    .time {
+      height: 100%;
+      width: 70vw;
+      padding: auto auto;
+      font-size: 8vh;
+      text-align: center;
+      line-height: 6vh;
+    }
+    .driver-display .instruction {
+      border-bottom: none;
+      height: 10vh;
+    }
+
+    .instruction {
+      display: flex;
+    }
+
+    .next-instruction {
+      height: 100%;
+      width: 70vw;
+      padding: auto auto;
+      font-size: 2.5rem;
+      text-align: center;
+    }
+
+
+    h4 {
+      color: #888;
+      position: relative;
+      top: 1px;
+      left: 2px;
+      text-align: left;
+      font-size: .7rem;
+      margin:0 0;
+    }
+    canvas {
+      position: absolute;
+      top: 10vh;
+      left: 10vw;
+      background-color: white;
+      width: 400px;
+      height: 400px;
+      border: 2px solid black;
+      z-index: 1000;
+    }
   </style>
   <body ng-app="app">
+    <canvas id="speedo" class="speedo"></canvas>
     <div ng-controller="RouteController">
       <h4># of Instructions: {{ totalInstructions }}, CURRENT INSTRUCTION: {{currentInstruction}}</h4>
-      <h4>CAST: {{ currentCAST }}</h4>
-      <h4>TIME: {{ currentTime | date:'HH:MM:ss'}}</h4>
-      <h4>ODO: {{ currentMileage / 1000 }}</h4>
-      <h4>CAS: {{ currentAverageSpeed }}</h4>
-      <h4>VARIATION: {{ currentVariation }}</h4>
+      <div  class="driver-display">
+        <div class="distance">
+          <div class="cast">
+            <h4>SPEED:</h4>{{ currentAverageSpeed }}
+          </div>
+          <div class="mileage">
+            <h4>MILEAGE:</h4>{{currentMileage / 1000}}
+          </div>
+        </div>
+        <div class="times">
+          <div class="cast">
+            <h4>CAST:</h4>{{ currentCAST}}
+          </div>
+          <div class="time">
+            <h4>TIME:</h4>{{ currentTime }}
+          </div>
+        </div>
+        <div class="instruction">
+            <div class="difference">
+              <h4>DIFF:</h4>{{ currentVariation }}
+            </div>
+          <div class="next-instruction">
+            <h4>NEXT INSTRUCTION:</h4>
+            {{ nextInstruction.instruction }}
+          </div>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -60,6 +175,45 @@
   <script type="text/javascript" src="/bower_components/angular/angular.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="app.js"></script>
+  <script type="text/javascript">
+    var Speedo = function(canvasId){
+      var me = {};
 
+      me.canvas = document.getElementById(canvasId);
+      me.canh = me.canvas.height;
+      me.canw = me.canvas.width;
+      me.context = me.canvas.getContext('2d');
+
+      me.pixelX = me.canw/100
+      me.pixelY = me.canh/100
+
+      clear = function(){
+        me.context.clearRect(0,0,me.canw,me.canh);
+      }
+      needle = function(speed){
+        var oldFill = me.context.fillStyle;
+        me.context.fillStyle = "#ff0000";
+        me.context.translate(50*me.pixelX, 50*me.pixelY)
+        me.context.rotate((speed * .1));
+        me.context.fillRect(0,0, 4, 60*me.pixelX)
+        me.context.rotate(-((speed * .1)));
+        me.context.translate(-(50*me.pixelX), -(50*me.pixelY))
+        // me.context.rotate(-.3)
+        me.context.fillStyle = oldFill
+      }
+
+
+      pixel = function(){
+        console.log(this.canw);
+      }
+
+      return {
+        pixel: pixel,
+        clear: clear,
+        needle: needle,
+        context: me.context
+      }
+    }('speedo')
+  </script>
 
 </html>

@@ -2,7 +2,16 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var serialport = require('serialport');
 var port = 3000;
+
+serialport.list(function (err, ports) {
+  ports.forEach(function(port) {
+    console.log(port.comName);
+    console.log(port.pnpId);
+    console.log(port.manufacturer);
+  });
+});
 
 app.use(express.static(__dirname + '/public'));
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
@@ -63,8 +72,8 @@ var tick = setInterval(function(){
 
 var calcs = setInterval(function(){
   rally.runCalcs();
-}, 250)
+}, rally.calcInterval())
 
 var pulseSim = setInterval(function(){
   rally.pulse();
-}, 23)
+}, 145/4)

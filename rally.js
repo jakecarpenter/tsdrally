@@ -1,8 +1,9 @@
 var computeStage, thouRound, measureDuration, currentMileage, miles, pulses,
 forward, parked, currentSpeed, currentDifference, distance, difference, speed,
-rallyDifference, rallySpeed, stage, cast, currentInstructionId;
+rallyDifference, rallySpeed, stage, cast, currentInstructionId, speedSamples,
+resetSpeed, calcInterval, interval;
 
-mileage = 550739; //in thousandths
+mileage = 550710; //in thousandths
 distance = 0; //distance since we started
 cast = 0;
 pulses = 0;
@@ -12,9 +13,17 @@ forward = true; //are we moving forward?
 parked = false; //stop counting mileage if parked
 rallySpeed = "4" + (Math.floor(Math.random()* 10));
 rallyDifference = -2;
-time = Date.now() + 10000
+time = Date.now() + 10000;
+speedSamples = [];
+interval = 4; //4 times per second.
 
+calcInterval = function(){
+  return 1000/interval;
+};
 
+resetSpeed = function(){
+  speedSamples = [];
+};
 
 currentMileage = function currentMileage(){
   return Math.round(mileage + distance)
@@ -89,9 +98,13 @@ currentDifference = function(){
   return rallyDifference;
 };
 
+var lastCalcTime = 0,
+    sampleCounter = 0;
+
 runCalcs = function(){
-  rallySpeed = "4" + (Math.floor(Math.random()* 10));
-  var miles = Math.round(mileage + distance);
+  // progress.
+  var miles = Math.round(mileage + distance),
+      now = Date.now();
   for (var i = 0; i < stage.length; i++) {
     instruction = stage[i]
     //are we on the right stage?
@@ -102,9 +115,44 @@ runCalcs = function(){
       //how far through the stage are we?
       var progress = miles - instruction.mileage;
       var targetTime = (measureDuration(instruction.speed, progress) + instruction.time);
-      rallyDifference = Math.round( ((targetTime - Date.now())/1000) * 10) /10;
+      rallyDifference = Math.round( ((targetTime - now)/1000) * 10) /10;
     }
   }
+
+  //speed samplers
+  sampleCounter++;
+  if(sampleCounter >= interval){
+    speedSamples.push({"mileage": (distance/1000), "time": now});
+
+    if(speedSamples.length >= 20){
+      speedSamples.shift(); //ditch the oldest sample.
+    }
+
+    sampleCounter = 0
+  }
+   //speed calc
+  var speeds = [];
+  for (var i = 0; i < speedSamples.length; i+=2) {
+    if(speedSamples.length % 2 == 0){
+      sample1 = speedSamples[i];
+      sample2 = speedSamples[i+1];
+      var durationL = (sample2.time - sample1.time)/1000
+      var distanceL = sample2.mileage - sample1.mileage
+      speeds.push(distanceL * 60 * (60 * durationL));
+      console.log(distanceL)
+    }
+  }
+
+  var total = 0;
+  speeds.map(function(val){
+    total += val;
+  })
+
+  rallySpeed = (total/speeds.length)? (total/speeds.length) :rallySpeed;
+  speeds = [];
+
+  rallySpeed = Math.round(rallySpeed*10)/10
+  lastCalcTime = now;
 }
 
 setStage = function(newStage){
@@ -130,5 +178,6 @@ module.exports = {
   pulse: pulse,
   runCalcs: runCalcs,
   setStage: setStage,
-  formatTime: formatTime
+  formatTime: formatTime,
+  calcInterval: calcInterval
 }

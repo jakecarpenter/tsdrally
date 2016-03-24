@@ -84,7 +84,6 @@
       }
     });
     $socket.on('rally:stage', function(stage){
-      console.log("new stage: ", stage)
       $scope.stage = stage
 
       // how many instructions
